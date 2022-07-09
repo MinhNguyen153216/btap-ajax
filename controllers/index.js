@@ -6,7 +6,7 @@ window.onload = () => {
 };
 
 function getAllProduct() {
-  var promise = axios({
+  let promise = axios({
     url: "http://svcy.myclass.vn/api/Product/GetAll",
     method: "GET",
   });
@@ -50,3 +50,32 @@ function renderTableProduct(arrProduct, tableID) {
   //   console.log(html);
   document.getElementById(tableID).innerHTML = html;
 }
+
+document.querySelector("#createProduct").onclick = ()=>{
+    let arrInput = document.querySelectorAll("#formProduct input, #formProduct select,#formProduct textarea");
+    let newProduct = new Product();
+    // console.log(arrInput);
+
+    arrInput.forEach((input, index)=>{
+        let {id, value} = input;
+        newProduct[id] = value;
+    });
+    // console.log(newProduct);
+
+    let promise = axios({
+        url: "http://svcy.myclass.vn/api/Product/CreateProduct",
+        method: "POST",
+        data: newProduct,
+    });
+    promise.then((result)=>{
+        console.log("result", result);
+    });
+    promise.catch((err)=>{
+        console.log("err", err);
+    });
+
+    setTimeout(()=>{
+        getAllProduct();
+        alert("Create new product sucessfully");
+    },1000);
+};
