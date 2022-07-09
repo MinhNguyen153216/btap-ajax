@@ -1,8 +1,10 @@
 console.log(axios);
-import { Product } from "../models/Product.js";
+// import { Product } from "../models/Product.js";
 
 window.onload = () => {
   getAllProduct();
+  let a = document.querySelector("#id");
+  console.log(a);
 };
 
 function getAllProduct() {
@@ -17,23 +19,21 @@ function getAllProduct() {
   });
 }
 
-function deleteProduct(productID) {
-  let promise = axios({
-    url: "http://svcy.myclass.vn/api/Product/DeleteProduct/" + productID,
-    method: "DELETE",
-  });
+function resetForm(){
+  document.querySelector("#id").value = null;
+  document.querySelector("#id").placeholder = document.querySelector("#id").placeholder;
+  
+  document.querySelector("#img").value = null;
+  document.querySelector("#img").placeholder = document.querySelector("#img").placeholder;
+  
+  document.querySelector("#name").value = null;
+  document.querySelector("#name").placeholder = document.querySelector("#name").placeholder;
+  
+  document.querySelector("#price").value = null;
+  document.querySelector("#price").placeholder = document.querySelector("#price").placeholder;
 
-  promise.then((result) => {
-    console.log("result:", result);
-  });
-
-  promise.catch((err) => {
-    console.log("err: ", err);
-  });
-}
-
-function test(){
-    console.log("test");
+  document.querySelector("#description").value = null;
+  document.querySelector("#description").placeholder = document.querySelector("#description").placeholder;
 }
 
 //write a renderTableProduct()
@@ -57,12 +57,12 @@ function renderTableProduct(arrProduct, tableID) {
                 <td>${product.description}</td>
                 <td>${product.type}</td>
                 <td>
-                    <button class="btn btn-danger" onclick="test()">
+                    <btn class="btn btn-danger" onclick="deleteProduct('${product.id}')">
                         <i class="fa fa-trash" aria-hidden="true"></i>
-                    </button>
-                    <button class="btn btn-primary">
+                    </btn>
+                    <btn class="btn btn-primary">
                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                    </button>
+                    </btn>
                 </td>
             </tr>`;
   });
@@ -70,13 +70,31 @@ function renderTableProduct(arrProduct, tableID) {
   document.getElementById(tableID).innerHTML = html;
 }
 
-function resetForm() {
-  let arrInput = document.querySelectorAll(
-    "#formProduct input, #formProduct select,#formProduct textarea"
+function deleteProduct(productID) {
+  let resultDel = confirm(
+    "Confirm delete product "+productID +"?"
   );
-  arrInput.forEach((input, index) => {
-    input.value = "";
-  });
+
+  if(resultDel){
+    let promise = axios({
+      url: "http://svcy.myclass.vn/api/Product/DeleteProduct/" + productID,
+      method: "DELETE",
+    });
+  
+    promise.then((result) => {
+      console.log("result:", result);
+    });
+  
+    promise.catch((err) => {
+      console.log("err: ", err);
+    });
+  
+    setTimeout(() => {
+      resetForm();
+      getAllProduct();
+      alert("Delete a product successfully");
+    }, 1000);
+  }
 }
 
 document.querySelector("#createProduct").onclick = () => {

@@ -7,4 +7,4 @@ function Product() {
   this.type = "";
 }
 
-export { Product };
+// export { Product };
