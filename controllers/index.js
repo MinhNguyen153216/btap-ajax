@@ -17,6 +17,25 @@ function getAllProduct() {
   });
 }
 
+function deleteProduct(productID) {
+  let promise = axios({
+    url: "http://svcy.myclass.vn/api/Product/DeleteProduct/" + productID,
+    method: "DELETE",
+  });
+
+  promise.then((result) => {
+    console.log("result:", result);
+  });
+
+  promise.catch((err) => {
+    console.log("err: ", err);
+  });
+}
+
+function test(){
+    console.log("test");
+}
+
 //write a renderTableProduct()
 function renderTableProduct(arrProduct, tableID) {
   let html = "";
@@ -38,7 +57,7 @@ function renderTableProduct(arrProduct, tableID) {
                 <td>${product.description}</td>
                 <td>${product.type}</td>
                 <td>
-                    <button class="btn btn-danger">
+                    <button class="btn btn-danger" onclick="test()">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                     </button>
                     <button class="btn btn-primary">
@@ -51,31 +70,43 @@ function renderTableProduct(arrProduct, tableID) {
   document.getElementById(tableID).innerHTML = html;
 }
 
-document.querySelector("#createProduct").onclick = ()=>{
-    let arrInput = document.querySelectorAll("#formProduct input, #formProduct select,#formProduct textarea");
-    let newProduct = new Product();
-    // console.log(arrInput);
+function resetForm() {
+  let arrInput = document.querySelectorAll(
+    "#formProduct input, #formProduct select,#formProduct textarea"
+  );
+  arrInput.forEach((input, index) => {
+    input.value = "";
+  });
+}
 
-    arrInput.forEach((input, index)=>{
-        let {id, value} = input;
-        newProduct[id] = value;
-    });
-    // console.log(newProduct);
+document.querySelector("#createProduct").onclick = () => {
+  let arrInput = document.querySelectorAll(
+    "#formProduct input, #formProduct select,#formProduct textarea"
+  );
+  let newProduct = new Product();
+  // console.log(arrInput);
 
-    let promise = axios({
-        url: "http://svcy.myclass.vn/api/Product/CreateProduct",
-        method: "POST",
-        data: newProduct,
-    });
-    promise.then((result)=>{
-        console.log("result", result);
-    });
-    promise.catch((err)=>{
-        console.log("err", err);
-    });
+  arrInput.forEach((input, index) => {
+    let { id, value } = input;
+    newProduct[id] = value;
+  });
+  // console.log(newProduct);
 
-    setTimeout(()=>{
-        getAllProduct();
-        alert("Create new product sucessfully");
-    },1000);
+  let promise = axios({
+    url: "http://svcy.myclass.vn/api/Product/CreateProduct",
+    method: "POST",
+    data: newProduct,
+  });
+  promise.then((result) => {
+    console.log("result", result);
+  });
+  promise.catch((err) => {
+    console.log("err", err);
+  });
+
+  setTimeout(() => {
+    // resetForm();
+    getAllProduct();
+    alert("Create new product successfully");
+  }, 1000);
 };
