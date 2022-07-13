@@ -1,10 +1,16 @@
 console.log(axios);
-// import { Product } from "../models/Product.js";
+import { Product } from "../models/Product.js";
+
+const defaultPlaceholder = [];
+let arrInput = document.querySelectorAll(
+  "#formProduct input, #formProduct select,#formProduct textarea"
+);
+arrInput.forEach((input, index) => {
+  defaultPlaceholder.push(input.placeholder);
+});
 
 window.onload = () => {
   getAllProduct();
-  let a = document.querySelector("#id");
-  console.log(a);
 };
 
 function getAllProduct() {
@@ -19,24 +25,22 @@ function getAllProduct() {
   });
 }
 
-function resetForm(){
-  document.querySelector("#id").value = null;
-  document.querySelector("#id").placeholder = document.querySelector("#id").placeholder;
-  
-  document.querySelector("#img").value = null;
-  document.querySelector("#img").placeholder = document.querySelector("#img").placeholder;
-  
-  document.querySelector("#name").value = null;
-  document.querySelector("#name").placeholder = document.querySelector("#name").placeholder;
-  
-  document.querySelector("#price").value = null;
-  document.querySelector("#price").placeholder = document.querySelector("#price").placeholder;
+function resetForm() {
+  let arrInput = document.querySelectorAll(
+    "#formProduct input, #formProduct select,#formProduct textarea"
+  );
+  console.log(arrInput);
 
-  document.querySelector("#description").value = null;
-  document.querySelector("#description").placeholder = document.querySelector("#description").placeholder;
+  arrInput.forEach((input, index) => {
+    input.value = null;
+    input.placeholder = defaultPlaceholder[index];
+
+    if (input.tagName === "SELECT") {
+      input.selectedIndex = 0;
+    }
+  });
 }
 
-//write a renderTableProduct()
 function renderTableProduct(arrProduct, tableID) {
   let html = "";
   /*
@@ -70,45 +74,42 @@ function renderTableProduct(arrProduct, tableID) {
   document.getElementById(tableID).innerHTML = html;
 }
 
-function deleteProduct(productID) {
-  let resultDel = confirm(
-    "Confirm delete product "+productID +"?"
-  );
+window.deleteProduct = (productID) => {
+  let resultDel = confirm("Confirm delete product " + productID + "?");
 
-  if(resultDel){
+  if (resultDel) {
     let promise = axios({
       url: "http://svcy.myclass.vn/api/Product/DeleteProduct/" + productID,
       method: "DELETE",
     });
-  
+
     promise.then((result) => {
       console.log("result:", result);
     });
-  
+
     promise.catch((err) => {
       console.log("err: ", err);
+      return alert("Delete a product failed");
     });
-  
+
     setTimeout(() => {
       resetForm();
       getAllProduct();
       alert("Delete a product successfully");
     }, 1000);
   }
-}
+};
 
 document.querySelector("#createProduct").onclick = () => {
   let arrInput = document.querySelectorAll(
     "#formProduct input, #formProduct select,#formProduct textarea"
   );
   let newProduct = new Product();
-  // console.log(arrInput);
 
   arrInput.forEach((input, index) => {
     let { id, value } = input;
     newProduct[id] = value;
   });
-  // console.log(newProduct);
 
   let promise = axios({
     url: "http://svcy.myclass.vn/api/Product/CreateProduct",
@@ -123,8 +124,8 @@ document.querySelector("#createProduct").onclick = () => {
   });
 
   setTimeout(() => {
-    // resetForm();
+    resetForm();
     getAllProduct();
     alert("Create new product successfully");
-  }, 1000);
+  }, 100);
 };
