@@ -74,18 +74,19 @@
               </ul>
             </li>
           </ul>
-          <form class="d-flex" role="search">
+          <form class="d-flex" role="search" onsubmit="return false">
             <input
               class="form-control me-2"
-              type="search"
+              type="number"
               placeholder="Search"
               aria-label="Search"
-              id="searchInput"
+              id="searchInputByID"
+              onchange="searchByID()"
             />
             <button
               class="btn btn-outline-success"
               type="submit"
-              id="searchProduct"
+              id="searchProductByID"
             >
               Search
             </button>

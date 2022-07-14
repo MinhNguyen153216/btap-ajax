@@ -57,7 +57,7 @@ function renderForm(data) {
   });
 }
 
-function renderTableProduct(arrProduct, tableID) {
+function renderTableProduct(arrProduct, tableID = "tableProduct") {
   let html = "";
   /*
   arrProduct.forEach((product, index) => {
@@ -196,5 +196,31 @@ document.querySelector("#updateProduct").onclick = () => {
   promise.catch((err) => {
     console.log("err", err);
   });
+};
 
+document.querySelector("#searchProductByID").onclick = () => {
+  searchByID();
+};
+
+window.searchByID = () => {
+  let searchInput = document.querySelector("#searchInputByID").value;
+  if (!searchInput) {
+    return getAllProduct();
+  }
+
+  let arrProduct = [];
+  let promise = axios({
+    url: "http://svcy.myclass.vn/api/Product/GetById/" + searchInput,
+    method: "GET",
+  });
+
+  promise.then((result) => {
+    console.log("result", result);
+
+    arrProduct.push(result.data);
+    renderTableProduct(arrProduct);
+  });
+  promise.catch((err) => {
+    console.log("err", err);
+  });
 };
