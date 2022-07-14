@@ -23,6 +23,10 @@ function getAllProduct() {
     console.log(result.data);
     renderTableProduct(result.data, "tableProduct");
   });
+
+  promise.catch((err) => {
+    console.log("err", err);
+  });
 }
 
 function resetForm() {
@@ -37,6 +41,18 @@ function resetForm() {
 
     if (input.tagName === "SELECT") {
       input.selectedIndex = 0;
+    }
+  });
+}
+
+function renderForm(data) {
+  let arrInput = document.querySelectorAll(
+    "#formProduct input, #formProduct select,#formProduct textarea"
+  );
+  arrInput.forEach((input, index) => {
+    input.value = data[input.id];
+    if (input.id === "id") {
+      input.disabled = true;
     }
   });
 }
@@ -61,10 +77,10 @@ function renderTableProduct(arrProduct, tableID) {
                 <td>${product.description}</td>
                 <td>${product.type}</td>
                 <td>
-                    <btn class="btn btn-danger" onclick="deleteProduct('${product.id}')">
+                    <btn class="btn btn-danger" onclick="deleteProduct('${product["id"]}')">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                     </btn>
-                    <btn class="btn btn-primary">
+                    <btn class="btn btn-primary" onclick="renderProduct('${product["id"]}')">
                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                     </btn>
                 </td>
@@ -100,6 +116,24 @@ window.deleteProduct = (productID) => {
   }
 };
 
+window.renderProduct = (productID) => {
+  let promise = axios({
+    url: "http://svcy.myclass.vn/api/Product/GetById/" + productID,
+    method: "GET",
+  });
+
+  promise.then((result) => {
+    console.log("result", result.data);
+    renderForm(result.data);
+    document.querySelector("#updateProduct").disabled = false;
+  });
+
+  promise.catch((err) => {
+    console.log("err", err);
+    return alert("Product is not avaiable");
+  });
+};
+
 document.querySelector("#createProduct").onclick = () => {
   let arrInput = document.querySelectorAll(
     "#formProduct input, #formProduct select,#formProduct textarea"
@@ -118,6 +152,7 @@ document.querySelector("#createProduct").onclick = () => {
   });
   promise.then((result) => {
     console.log("result", result);
+    alert("Create new product successfully");
   });
   promise.catch((err) => {
     console.log("err", err);
@@ -126,6 +161,40 @@ document.querySelector("#createProduct").onclick = () => {
   setTimeout(() => {
     resetForm();
     getAllProduct();
-    alert("Create new product successfully");
-  }, 100);
+  }, 1000);
+};
+
+document.querySelector("#updateProduct").disabled = true;
+document.querySelector("#updateProduct").onclick = () => {
+  let productUpdate = new Product();
+  let arrInput = document.querySelectorAll(
+    "#formProduct input, #formProduct select,#formProduct textarea"
+  );
+  arrInput.forEach((input, index) => {
+    let { id, value } = input;
+    productUpdate[id] = value;
+  });
+
+  let promise = axios({
+    url:
+      "http://svcy.myclass.vn/api/Product/UpdateProduct/" + productUpdate["id"],
+    method: "PUT",
+    data: productUpdate,
+  });
+
+  promise.then((result) => {
+    console.log("result", result.data);
+    document.querySelector("#id").disabled = false;
+    document.querySelector("#updateProduct").disabled = true;
+    setTimeout(() => {
+      resetForm();
+      getAllProduct();
+    }, 1000);
+    alert("Update product successfull");
+  });
+
+  promise.catch((err) => {
+    console.log("err", err);
+  });
+
 };

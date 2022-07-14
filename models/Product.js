@@ -1,10 +1,10 @@
 function Product() {
   this.id = "";
-  this.name = "";
-  this.price = "";
   this.img = "";
-  this.description = "";
+  this.name = "";
   this.type = "";
+  this.price = "";
+  this.description = "";
 }
 
 export { Product };
